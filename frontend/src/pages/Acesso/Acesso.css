@@ -1,0 +1,24 @@
+.pagina-acesso {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  background: linear-gradient(135deg, #f1f5f2 0%, #fafbfc 45%, #f1f3f6 100%);
+}
+.conteudo-acesso {
+  width: 100%;
+  max-width: 380px;
+}
+.conteudo-acesso .marca {
+  margin-bottom: 36px;
+}
+.conteudo-acesso h1 {
+  font-size: 24px;
+  margin-bottom: 28px;
+}
+.conteudo-acesso form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

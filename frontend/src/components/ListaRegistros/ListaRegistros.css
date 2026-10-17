@@ -1,0 +1,64 @@
+.barra-filtros {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 22px;
+}
+.barra-filtros > .MuiTextField-root {
+  max-width: 330px;
+}
+.barra-filtros .filtro-situacao {
+  max-width: 180px;
+}
+.barra-filtros > span {
+  margin-left: auto;
+}
+.area-tabela {
+  background: #fff;
+  border: 1px solid var(--fm-borda);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.resumo-tabela {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 17px 20px;
+  color: var(--fm-secundaria);
+  font-size: 12px;
+}
+.area-tabela .MuiTableCell-root {
+  font-size: 12px;
+}
+.area-tabela .MuiTableCell-body {
+  max-width: 270px;
+  overflow-wrap: anywhere;
+}
+.link-registro {
+  font-weight: 500;
+  color: #26372f;
+}
+.link-registro:hover {
+  color: var(--fm-destaque);
+  text-decoration: underline;
+}
+.acoes-linha {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  white-space: nowrap;
+}
+@media (max-width: 520px) {
+  .barra-filtros {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .barra-filtros > .MuiTextField-root:first-child {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+  .barra-filtros .filtro-situacao {
+    flex: 1;
+    max-width: 210px;
+  }
+}

@@ -1,0 +1,40 @@
+.formulario-registro {
+  max-width: 800px;
+  border-top: 1px solid var(--fm-borda);
+  padding-top: 28px;
+}
+.formulario-registro fieldset {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  min-width: 0;
+}
+.formulario-registro legend {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 28px;
+}
+.grade-formulario {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 24px;
+}
+.largura-total {
+  grid-column: 1 / -1;
+}
+.acoes-formulario {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  margin-top: 18px;
+  border-top: 1px solid var(--fm-borda);
+}
+@media (max-width: 520px) {
+  .grade-formulario {
+    grid-template-columns: 1fr;
+  }
+  .acoes-formulario {
+    justify-content: space-between;
+  }
+}

@@ -47,11 +47,28 @@ class AgendamentoApiTests {
 
     @Test
     void seedsDevelopmentDataInEveryTable() {
-        assertTrue(alunos.count() >= 5);
-        assertTrue(planos.count() >= 4);
-        assertTrue(instrutores.count() >= 4);
-        assertTrue(matriculas.count() >= 5);
-        assertTrue(agendamentos.count() >= 6);
+        assertTrue(alunos.count() >= 105);
+        assertTrue(planos.count() >= 14);
+        assertTrue(instrutores.count() >= 24);
+        assertTrue(matriculas.count() >= 85);
+        assertTrue(agendamentos.count() >= 106);
+    }
+
+    @Test
+    void allowsConfiguredFrontendOriginForCorsPreflight() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl() + "/api/agendamentos"))
+                .header("Origin", "http://localhost:5173")
+                .header("Access-Control-Request-Method", "POST")
+                .header("Access-Control-Request-Headers", "content-type")
+                .method("OPTIONS", HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(200, response.statusCode());
+        assertEquals("http://localhost:5173", response.headers().firstValue("Access-Control-Allow-Origin")
+                .orElseThrow());
+        assertTrue(response.headers().firstValue("Access-Control-Allow-Methods").orElseThrow().contains("POST"));
     }
 
     @Test

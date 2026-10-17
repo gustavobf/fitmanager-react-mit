@@ -1,0 +1,44 @@
+.cabecalho-pagina {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+.cabecalho-pagina > div:first-child {
+  min-width: 0;
+  max-width: 100%;
+}
+.cabecalho-pagina p {
+  color: var(--fm-secundaria);
+  font-size: 13px;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+}
+.acao-cabecalho {
+  flex-shrink: 0;
+}
+.estado-carregamento {
+  min-height: 220px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  color: var(--fm-secundaria);
+  font-size: 13px;
+}
+@media (max-width: 800px) {
+  .cabecalho-pagina {
+    gap: 14px;
+    align-items: flex-start;
+  }
+}
+@media (max-width: 520px) {
+  .cabecalho-pagina {
+    flex-direction: column;
+    gap: 18px;
+  }
+  .cabecalho-pagina p {
+    line-height: 1.6;
+  }
+}

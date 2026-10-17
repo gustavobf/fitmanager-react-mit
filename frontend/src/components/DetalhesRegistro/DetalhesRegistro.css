@@ -1,0 +1,64 @@
+.secao-detalhes {
+  border-top: 1px solid var(--fm-borda);
+  padding: 28px 0;
+}
+.grade-detalhes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+  margin: 28px 0;
+}
+.grade-detalhes dt {
+  font-size: 12px;
+  color: #8b9298;
+  margin-bottom: 7px;
+}
+.grade-detalhes dd {
+  font-size: 14px;
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.situacao-registro {
+  max-width: 280px;
+  margin-top: 30px;
+}
+.metadados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 30px;
+  color: #949ba1;
+  font-size: 11px;
+}
+.acoes-relacionadas {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.area-exclusao {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  padding: 26px 0;
+  border-top: 1px solid var(--fm-borda);
+}
+.area-exclusao h2 {
+  font-size: 14px;
+  font-weight: 500;
+}
+.area-exclusao p {
+  font-size: 12px;
+  color: #8b9298;
+  margin-top: 5px;
+}
+@media (max-width: 520px) {
+  .grade-detalhes {
+    grid-template-columns: 1fr;
+  }
+  .area-exclusao {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
