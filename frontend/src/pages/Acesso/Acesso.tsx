@@ -8,7 +8,7 @@ import type { DespachoAplicacao, EstadoAplicacao } from '../../app/store'
 import './Acesso.css'
 
 export default function Acesso() {
-  const { acessoLiberado, usuario } = useSelector((estado: EstadoAplicacao) => estado.acesso)
+  const acessoLiberado = useSelector((estado: EstadoAplicacao) => estado.acesso.acessoLiberado)
   const despachar = useDispatch<DespachoAplicacao>()
   const localizacao = useLocation()
   const [erroNome, definirErroNome] = useState('')
@@ -49,7 +49,6 @@ export default function Acesso() {
           <TextField
             name="nome"
             label="Seu nome"
-            defaultValue={usuario.nome}
             required
             autoFocus
             autoComplete="name"
