@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface MatriculaRepository extends JpaRepository<Matricula, Long>, JpaSpecificationExecutor<Matricula> {
     boolean existsByAlunoId(Long alunoId);
+    void deleteAllByAlunoId(Long alunoId);
     boolean existsByPlanoId(Long planoId);
     long countByStatus(StatusMatricula status);
     long countByStatusAndDataFimBetween(StatusMatricula status, java.time.LocalDate inicio, java.time.LocalDate fim);

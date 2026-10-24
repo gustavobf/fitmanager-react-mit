@@ -51,11 +51,17 @@ export const formatarValor = (
   if (typeof valor === 'boolean') return valor ? 'Ativo' : 'Inativo'
   if (/^(data|criadoEm|atualizadoEm)/.test(chave)) {
     const data = String(valor)
+    if (!data.includes('T'))
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        timeZone: 'UTC',
+      }).format(new Date(`${data}T00:00:00Z`))
     return new Intl.DateTimeFormat('pt-BR', {
       dateStyle: 'short',
-      ...(data.includes('T')
-        ? { timeStyle: 'short' as const, timeZone: 'America/Sao_Paulo' }
-        : { timeZone: 'UTC' }),
+      timeStyle: 'short',
+      timeZone: 'America/Sao_Paulo',
     }).format(new Date(data))
   }
   return String(valor)

@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -175,6 +176,46 @@ class AgendamentoApiTests {
                 {"nome":"A","email":"invalido"}
                 """, 400);
         assertEquals("REQUISICAO_INVALIDA", error.get("codigo").asText());
+    }
+
+    @Test
+    void deletesStudentHistoryOnlyAfterExplicitConfirmation() throws Exception {
+        String unique = UUID.randomUUID().toString();
+        JsonNode aluno = post("/api/alunos", """
+                {"nome":"Aluno com histórico","email":"aluno.%s@example.com"}
+                """.formatted(unique), 201);
+        JsonNode instrutor = post("/api/instrutores", """
+                {"nome":"Instrutor histórico","email":"instrutor.%s@example.com","especialidade":"Pilates"}
+                """.formatted(unique), 201);
+        JsonNode plano = post("/api/planos", """
+                {"nome":"Plano histórico %s","duracaoEmDias":30,"preco":99.90}
+                """.formatted(unique), 201);
+        long alunoId = aluno.get("id").asLong();
+        post("/api/matriculas", """
+                {"alunoId":%d,"planoId":%d,"dataInicio":"2026-10-17"}
+                """.formatted(alunoId, plano.get("id").asLong()), 201);
+        post("/api/agendamentos", """
+                {"alunoId":%d,"instrutorId":%d,"dataHora":"2026-10-30T18:30:00","duracaoEmMinutos":45}
+                """.formatted(alunoId, instrutor.get("id").asLong()), 201);
+
+        HttpResponse<String> bloqueio = delete("/api/alunos/" + alunoId);
+        assertEquals(409, bloqueio.statusCode());
+        assertEquals("ALUNO_COM_HISTORICO", objectMapper.readTree(bloqueio.body()).get("codigo").asText());
+        assertTrue(alunos.existsById(alunoId));
+
+        HttpResponse<String> exclusao = delete("/api/alunos/" + alunoId + "?apagarHistorico=true");
+        assertEquals(204, exclusao.statusCode());
+        assertFalse(alunos.existsById(alunoId));
+        assertFalse(matriculas.existsByAlunoId(alunoId));
+        assertFalse(agendamentos.existsByAlunoId(alunoId));
+    }
+
+    private HttpResponse<String> delete(String path) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl() + path))
+                .header("Authorization", "Bearer " + token)
+                .DELETE()
+                .build();
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     private JsonNode post(String path, String body, int expectedStatus) throws Exception {

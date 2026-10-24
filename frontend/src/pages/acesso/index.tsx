@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, TextField } from '@mui/material'
+import { Alert, Button, TextField } from '@mui/material'
 import { ArrowForward, FitnessCenter } from '@mui/icons-material'
 import { Navigate, useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
@@ -14,6 +14,7 @@ export default function Acesso() {
   const localizacao = useLocation()
   const [erroLogin, definirErroLogin] = useState('')
   const [carregando, definirCarregando] = useState(false)
+  const [avisoDemora, definirAvisoDemora] = useState(false)
   const origem: unknown = localizacao.state?.origem
   const destino =
     typeof origem === 'string' &&
@@ -48,6 +49,8 @@ export default function Acesso() {
             }
             definirCarregando(true)
             definirErroLogin('')
+            definirAvisoDemora(false)
+            const temporizadorAviso = window.setTimeout(() => definirAvisoDemora(true), 5000)
             try {
               const resposta = await fazerLogin(login, senha)
               dispatch(entrar({ nome: resposta.nome, token: resposta.token }))
@@ -56,6 +59,8 @@ export default function Acesso() {
                 erro instanceof Error ? erro.message : 'Não foi possível entrar. Tente novamente.',
               )
             } finally {
+              window.clearTimeout(temporizadorAviso)
+              definirAvisoDemora(false)
               definirCarregando(false)
             }
           }}
@@ -88,6 +93,12 @@ export default function Acesso() {
           >
             {carregando ? 'Entrando...' : 'Entrar'}
           </Button>
+          {avisoDemora && (
+            <Alert severity="info">
+              A primeira requisição pode demorar cerca de 2 minutos enquanto o servidor desperta.
+              Aguarde, por favor.
+            </Alert>
+          )}
         </form>
       </div>
     </main>

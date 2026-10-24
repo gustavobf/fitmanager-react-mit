@@ -2,6 +2,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router'
 import { Alert, Button, Checkbox, FormControlLabel, MenuItem, TextField } from '@mui/material'
 import { ArrowBack, SaveOutlined } from '@mui/icons-material'
+import dayjs from 'dayjs'
+import 'dayjs/locale/pt-br'
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { ptBR } from '@mui/x-date-pickers/locales'
 import { AvisoErro, Carregando, CabecalhoPagina } from '../mensagens'
 import { useNotification } from '../../app/contexts'
 import { useFormulario } from './useFormulario'
@@ -54,7 +59,11 @@ function ConteudoFormulario({
   })
 
   return (
-    <>
+    <LocalizationProvider
+      dateAdapter={AdapterDayjs}
+      adapterLocale="pt-br"
+      localeText={ptBR.components.MuiLocalizationProvider.defaultProps.localeText}
+    >
       {referencias.erro && (
         <AvisoErro erro={referencias.erro} tentarNovamente={referencias.tentarNovamente} />
       )}
@@ -103,6 +112,31 @@ function ConteudoFormulario({
                     />
                   </div>
                 )
+              if (tipo === 'date')
+                return (
+                  <DatePicker
+                    key={nome}
+                    label={rotulo}
+                    value={formulario.valores[nome] ? dayjs(String(formulario.valores[nome])) : null}
+                    onChange={(data) => {
+                      if (data === null) formulario.definirValor(nome, '')
+                      else if (data.isValid()) formulario.definirValor(nome, data.format('YYYY-MM-DD'))
+                    }}
+                    format="DD/MM/YYYY"
+                    dayOfWeekFormatter={(data) => data.format('ddd')}
+                    maxDate={nome === 'dataNascimento' ? dayjs() : undefined}
+                    slotProps={{
+                      textField: {
+                        id: `campo-${nome}`,
+                        name: nome,
+                        required: obrigatorio,
+                        error: !!formulario.erros[nome],
+                        helperText: formulario.erros[nome] || ' ',
+                        fullWidth: true,
+                      },
+                    }}
+                  />
+                )
               const opcoesDisponiveis = referencia ? (referencias.dados[referencia] ?? []) : []
               return (
                 <TextField
@@ -129,7 +163,7 @@ function ConteudoFormulario({
                   className={tipo === 'textarea' ? 'largura-total' : undefined}
                   slotProps={{
                     inputLabel:
-                      tipo === 'date' || tipo === 'datetime-local' ? { shrink: true } : undefined,
+                      tipo === 'datetime-local' ? { shrink: true } : undefined,
                     htmlInput: {
                       min: tipo === 'number' ? minimo : undefined,
                       max:
@@ -192,7 +226,7 @@ function ConteudoFormulario({
           </Button>
         </div>
       </form>
-    </>
+    </LocalizationProvider>
   )
 }
 

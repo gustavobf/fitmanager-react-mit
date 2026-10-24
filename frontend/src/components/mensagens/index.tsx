@@ -91,8 +91,8 @@ export function ConfirmacaoExclusao({
 }) {
   const cliente = useQueryClient()
   const notificar = useNotification()
-  const mutacao = useMutation({
-    mutationFn: () => excluirRegistro(recurso, registro!.id),
+  const mutacao = useMutation<void, Error, boolean>({
+    mutationFn: (apagarHistorico) => excluirRegistro(recurso, registro!.id, apagarHistorico),
     onSuccess: () => {
       // Não consulta novamente o detalhe excluído: essa busca retornaria um erro 404.
       void cliente.invalidateQueries({
@@ -108,6 +108,8 @@ export function ConfirmacaoExclusao({
       aoExcluir?.()
     },
   })
+  const confirmarExclusaoHistorico =
+    recurso === 'alunos' && mutacao.error instanceof ErroApi && mutacao.error.status === 409
   return (
     <Dialog
       open={!!registro}
@@ -123,7 +125,15 @@ export function ConfirmacaoExclusao({
         <DialogContentText>{`O registro ${registro?.nome ? `"${registro.nome}"` : `#${registro?.id}`} será excluído permanentemente. Esta ação não pode ser desfeita.`}</DialogContentText>
         {mutacao.error && (
           <div className="espaco-mensagem">
-            <AvisoErro erro={mutacao.error} />
+            {confirmarExclusaoHistorico ? (
+              <Alert severity="warning">
+                <AlertTitle>Histórico encontrado</AlertTitle>
+                Ao continuar, o aluno e todas as matrículas e agendamentos relacionados serão
+                apagados permanentemente. Essa ação não pode ser desfeita.
+              </Alert>
+            ) : (
+              <AvisoErro erro={mutacao.error} />
+            )}
           </div>
         )}
       </DialogContent>
@@ -135,9 +145,13 @@ export function ConfirmacaoExclusao({
           color="error"
           variant="contained"
           disabled={mutacao.isPending}
-          onClick={() => mutacao.mutate()}
+          onClick={() => mutacao.mutate(confirmarExclusaoHistorico)}
         >
-          {mutacao.isPending ? 'Excluindo...' : 'Excluir registro'}
+          {mutacao.isPending
+            ? 'Excluindo...'
+            : confirmarExclusaoHistorico
+              ? 'Excluir aluno e histórico'
+              : 'Excluir registro'}
         </Button>
       </DialogActions>
     </Dialog>

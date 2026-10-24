@@ -38,11 +38,14 @@ export default function ListaRegistros({ recurso }: { recurso: Recurso }) {
   const [excluindo, definirExcluindo] = useState<Registro | null>(null)
   const busca = parametros.get('nome') ?? ''
   const filtro = parametros.get('status') ?? parametros.get('ativo') ?? ''
+  const alunoId = parametros.get('alunoId') ?? ''
   const paginaSolicitada = Number(parametros.get('pagina') ?? 0)
   const pagina = Number.isInteger(paginaSolicitada) && paginaSolicitada >= 0 ? paginaSolicitada : 0
   const buscaAdiada = useDeferredValue(busca)
   const parametrosConsulta = new URLSearchParams({ pagina: String(pagina), tamanho: '10' })
   if (buscaAdiada && !configuracao.situacoes) parametrosConsulta.set('nome', buscaAdiada)
+  if (alunoId && configuracao.referencias.includes('alunos'))
+    parametrosConsulta.set('alunoId', alunoId)
   if (filtro) parametrosConsulta.set(configuracao.situacoes ? 'status' : 'ativo', filtro)
   const consulta = useQuery({
     queryKey: ['registros', recurso, parametrosConsulta.toString()],
@@ -88,6 +91,22 @@ export default function ListaRegistros({ recurso }: { recurso: Recurso }) {
               },
             }}
           />
+        )}
+        {configuracao.referencias.includes('alunos') && (
+          <TextField
+            select
+            label="Aluno"
+            value={alunoId}
+            disabled={referencias.carregando}
+            onChange={(evento) => alterarFiltro('alunoId', evento.target.value)}
+          >
+            <MenuItem value="">Todos os alunos</MenuItem>
+            {(referencias.dados.alunos ?? []).map((aluno) => (
+              <MenuItem key={aluno.id} value={String(aluno.id)}>
+                {String(aluno.nome)}
+              </MenuItem>
+            ))}
+          </TextField>
         )}
         <TextField
           select
@@ -156,7 +175,7 @@ export default function ListaRegistros({ recurso }: { recurso: Recurso }) {
             <div className="estado-vazio">
               <h2>{pagina > 0 ? 'Nenhum registro nesta página' : 'Nenhum registro encontrado'}</h2>
               <p>
-                {busca || filtro
+                {busca || filtro || alunoId
                   ? 'Nenhum resultado corresponde aos filtros selecionados.'
                   : 'Os cadastros aparecerão aqui.'}
               </p>

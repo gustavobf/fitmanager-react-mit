@@ -26,8 +26,11 @@ export const salvarRegistro = (recurso: Recurso, dadosEnvio: Record<string, Valo
     method: id ? (recurso === 'matriculas' ? 'PATCH' : 'PUT') : 'POST',
     body: JSON.stringify(dadosEnvio),
   })
-export const excluirRegistro = (recurso: Recurso, id: number) =>
-  requisitar<void>(`/api/${recurso}/${id}`, { method: 'DELETE' })
+export const excluirRegistro = (recurso: Recurso, id: number, apagarHistorico = false) =>
+  requisitar<void>(
+    `/api/${recurso}/${id}${recurso === 'alunos' && apagarHistorico ? '?apagarHistorico=true' : ''}`,
+    { method: 'DELETE' },
+  )
 export const alterarSituacao = (recurso: Recurso, id: string, situacao: string) =>
   requisitar<Registro>(`/api/${recurso}/${id}`, {
     method: 'PATCH',

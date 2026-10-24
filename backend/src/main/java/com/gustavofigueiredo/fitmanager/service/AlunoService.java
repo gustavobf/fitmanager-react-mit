@@ -65,11 +65,16 @@ public class AlunoService {
         return AlunoResponse.from(repository.save(aluno));
     }
 
-    public void excluir(Long id) {
+    public void excluir(Long id, boolean apagarHistorico) {
         Aluno aluno = obter(id);
-        if (matriculas.existsByAlunoId(id) || agendamentos.existsByAlunoId(id)) {
+        boolean possuiHistorico = matriculas.existsByAlunoId(id) || agendamentos.existsByAlunoId(id);
+        if (possuiHistorico && !apagarHistorico) {
             throw ApiException.conflito("ALUNO_COM_HISTORICO",
                     "O aluno possui histórico relacionado e não pode ser excluído.");
+        }
+        if (apagarHistorico) {
+            matriculas.deleteAllByAlunoId(id);
+            agendamentos.deleteAllByAlunoId(id);
         }
         repository.delete(aluno);
     }

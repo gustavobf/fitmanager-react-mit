@@ -96,8 +96,9 @@ public interface AlunoApi {
                             @Valid AlunoRequest request);
 
     @Operation(summary = "Excluir aluno", description = """
-            Exclui fisicamente o aluno. A exclusão é recusada se existir qualquer matrícula ou
-            agendamento relacionado; nesses casos, desative o aluno usando a atualização.
+            Exclui fisicamente o aluno. Por padrão, a exclusão é recusada se existir qualquer matrícula
+            ou agendamento relacionado. Envie `apagarHistorico=true` somente após confirmar que deseja
+            excluir permanentemente esses registros junto com o aluno.
             """)
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Aluno excluído."),
@@ -107,5 +108,7 @@ public interface AlunoApi {
                             {"codigo":"ALUNO_COM_HISTORICO","mensagem":"O aluno possui histórico relacionado e não pode ser excluído.","detalhes":[],"dataHora":"2026-10-17T10:00:00-03:00"}
                             """)))
     })
-    void excluir(@Parameter(description = "Identificador numérico do aluno.", example = "1") @Min(1) Long id);
+        void excluir(@Parameter(description = "Identificador numérico do aluno.", example = "1") @Min(1) Long id,
+                                 @Parameter(description = "Confirma a exclusão permanente das matrículas e agendamentos relacionados.",
+                         example = "true", required = false) boolean apagarHistorico);
 }

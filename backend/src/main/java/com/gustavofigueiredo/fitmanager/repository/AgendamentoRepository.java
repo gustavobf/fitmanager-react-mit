@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface AgendamentoRepository extends JpaRepository<Agendamento, Long>, JpaSpecificationExecutor<Agendamento> {
     boolean existsByAlunoId(Long alunoId);
+    void deleteAllByAlunoId(Long alunoId);
     boolean existsByInstrutorId(Long instrutorId);
     long countByDataHoraGreaterThanEqualAndDataHoraLessThan(OffsetDateTime inicio, OffsetDateTime fim);
     List<Agendamento> findByInstrutorIdAndStatusNotAndDataHoraLessThan(

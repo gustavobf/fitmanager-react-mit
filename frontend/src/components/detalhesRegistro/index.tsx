@@ -123,10 +123,10 @@ export default function DetalhesRegistro({ recurso }: { recurso: Recurso }) {
       </section>
       {recurso === 'alunos' && (
         <div className="acoes-relacionadas">
-          <Button component={Link} to="/matriculas">
+          <Button component={Link} to={`/matriculas?alunoId=${registro.id}`}>
             Ver matrículas
           </Button>
-          <Button component={Link} to="/agendamentos">
+          <Button component={Link} to={`/agendamentos?alunoId=${registro.id}`}>
             Ver agendamentos
           </Button>
         </div>
@@ -135,7 +135,7 @@ export default function DetalhesRegistro({ recurso }: { recurso: Recurso }) {
         <div className="area-exclusao">
           <div>
             <h2>Excluir cadastro</h2>
-            <p>A exclusao permanente depende da ausencia de vínculos no histórico.</p>
+            <p>Se houver histórico, uma confirmação adicional permitirá excluí-lo junto com o cadastro.</p>
           </div>
           <Button
             color="error"
