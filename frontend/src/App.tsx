@@ -1,22 +1,22 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router'
-import Provedores from './app/Provedores'
-import Estrutura from './components/Estrutura/Estrutura'
-import RotaPrivada from './components/RotaPrivada/RotaPrivada'
-import { Carregando } from './components/Mensagens/Mensagens'
-import PaginaNaoEncontrada from './pages/PaginaNaoEncontrada/PaginaNaoEncontrada'
+import Providers from './app/providers'
+import Estrutura from './components/estrutura'
+import RotaPrivada from './components/rotaPrivada'
+import { Carregando } from './components/mensagens'
+import PaginaNaoEncontrada from './pages/paginaNaoEncontrada'
 
-const Acesso = lazy(() => import('./pages/Acesso/Acesso'))
-const Painel = lazy(() => import('./pages/Painel/Painel'))
-const Alunos = lazy(() => import('./pages/Alunos/Alunos'))
-const Planos = lazy(() => import('./pages/Planos/Planos'))
-const Instrutores = lazy(() => import('./pages/Instrutores/Instrutores'))
-const Matriculas = lazy(() => import('./pages/Matriculas/Matriculas'))
-const Agendamentos = lazy(() => import('./pages/Agendamentos/Agendamentos'))
+const Acesso = lazy(() => import('./pages/acesso'))
+const Painel = lazy(() => import('./pages/painel'))
+const Alunos = lazy(() => import('./pages/alunos'))
+const Planos = lazy(() => import('./pages/planos'))
+const Instrutores = lazy(() => import('./pages/instrutores'))
+const Matriculas = lazy(() => import('./pages/matriculas'))
+const Agendamentos = lazy(() => import('./pages/agendamentos'))
 
 export default function App() {
   return (
-    <Provedores>
+    <Providers>
       <BrowserRouter>
         <a href="#conteudo-principal" className="atalho-conteudo">
           Ir para o conteúdo
@@ -38,6 +38,6 @@ export default function App() {
           </Routes>
         </Suspense>
       </BrowserRouter>
-    </Provedores>
+    </Providers>
   )
 }

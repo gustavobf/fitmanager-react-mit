@@ -165,7 +165,7 @@ WHERE aluno.email = 'bruno.costa@example.com'
   AND NOT EXISTS (SELECT 1 FROM agendamentos WHERE observacoes = 'Sessão cancelada');
 
 INSERT INTO alunos (nome, email, telefone, data_nascimento, ativo, criado_em, atualizado_em)
-SELECT CASE MOD(amostra.x - 1, 10)
+SELECT CASE MOD(amostra.x - 1, 20)
            WHEN 0 THEN 'Ana'
            WHEN 1 THEN 'Beatriz'
            WHEN 2 THEN 'Bruno'
@@ -175,9 +175,19 @@ SELECT CASE MOD(amostra.x - 1, 10)
            WHEN 6 THEN 'Fernanda'
            WHEN 7 THEN 'Gabriel'
            WHEN 8 THEN 'Juliana'
-           ELSE 'Rafael'
+       WHEN 9 THEN 'Rafael'
+       WHEN 10 THEN 'Amanda'
+       WHEN 11 THEN 'Bianca'
+       WHEN 12 THEN 'Caio'
+       WHEN 13 THEN 'Carolina'
+       WHEN 14 THEN 'Felipe'
+       WHEN 15 THEN 'Isabela'
+       WHEN 16 THEN 'Lucas'
+       WHEN 17 THEN 'Mariana'
+       WHEN 18 THEN 'Thiago'
+       ELSE 'Vanessa'
        END || ' ' ||
-       CASE FLOOR((amostra.x - 1) / 10)
+     CASE FLOOR((amostra.x - 1) / 20)
            WHEN 0 THEN 'Almeida'
            WHEN 1 THEN 'Barros'
            WHEN 2 THEN 'Carvalho'
@@ -187,14 +197,38 @@ SELECT CASE MOD(amostra.x - 1, 10)
            WHEN 6 THEN 'Lima'
            WHEN 7 THEN 'Martins'
            WHEN 8 THEN 'Nascimento'
-           ELSE 'Oliveira'
+       WHEN 9 THEN 'Oliveira'
+       WHEN 10 THEN 'Pereira'
+       WHEN 11 THEN 'Ribeiro'
+       WHEN 12 THEN 'Rocha'
+       WHEN 13 THEN 'Santos'
+       WHEN 14 THEN 'Costa'
+       WHEN 15 THEN 'Souza'
+       WHEN 16 THEN 'Araújo'
+       WHEN 17 THEN 'Barbosa'
+       WHEN 18 THEN 'Cardoso'
+       ELSE 'Teixeira'
        END,
        'amostra.aluno.' || amostra.x || '@example.com',
-       '+55 11 90000-' || RIGHT('0000' || CAST(amostra.x AS VARCHAR), 4),
-       DATEADD('DAY', -MOD(amostra.x * 173, 12000), CURRENT_DATE),
-       CASE WHEN MOD(amostra.x, 10) = 0 THEN FALSE ELSE TRUE END,
+     CASE WHEN MOD(amostra.x, 13) = 0 THEN NULL ELSE
+       '+55 ' || CASE MOD(amostra.x - 1, 10)
+         WHEN 0 THEN '11'
+         WHEN 1 THEN '21'
+         WHEN 2 THEN '31'
+         WHEN 3 THEN '41'
+         WHEN 4 THEN '51'
+         WHEN 5 THEN '61'
+         WHEN 6 THEN '71'
+         WHEN 7 THEN '81'
+         WHEN 8 THEN '85'
+         ELSE '91'
+       END || ' 9' || RIGHT('0000' || CAST(MOD(amostra.x * 137, 10000) AS VARCHAR), 4)
+         || '-' || RIGHT('0000' || CAST(MOD(amostra.x * 251, 10000) AS VARCHAR), 4)
+     END,
+     DATEADD('DAY', -(6570 + MOD(amostra.x * 173, 17000)), CURRENT_DATE),
+     CASE WHEN MOD(amostra.x, 12) = 0 THEN FALSE ELSE TRUE END,
        CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
-FROM SYSTEM_RANGE(1, 100) amostra
+FROM SYSTEM_RANGE(1, 400) amostra
 WHERE NOT EXISTS (
     SELECT 1 FROM alunos
     WHERE email = 'amostra.aluno.' || amostra.x || '@example.com'
@@ -202,7 +236,7 @@ WHERE NOT EXISTS (
 
 UPDATE alunos aluno
 SET nome = (
-    SELECT CASE MOD(amostra.x - 1, 10)
+    SELECT CASE MOD(amostra.x - 1, 20)
                WHEN 0 THEN 'Ana'
                WHEN 1 THEN 'Beatriz'
                WHEN 2 THEN 'Bruno'
@@ -212,9 +246,19 @@ SET nome = (
                WHEN 6 THEN 'Fernanda'
                WHEN 7 THEN 'Gabriel'
                WHEN 8 THEN 'Juliana'
-               ELSE 'Rafael'
+           WHEN 9 THEN 'Rafael'
+           WHEN 10 THEN 'Amanda'
+           WHEN 11 THEN 'Bianca'
+           WHEN 12 THEN 'Caio'
+           WHEN 13 THEN 'Carolina'
+           WHEN 14 THEN 'Felipe'
+           WHEN 15 THEN 'Isabela'
+           WHEN 16 THEN 'Lucas'
+           WHEN 17 THEN 'Mariana'
+           WHEN 18 THEN 'Thiago'
+           ELSE 'Vanessa'
            END || ' ' ||
-           CASE FLOOR((amostra.x - 1) / 10)
+         CASE FLOOR((amostra.x - 1) / 20)
                WHEN 0 THEN 'Almeida'
                WHEN 1 THEN 'Barros'
                WHEN 2 THEN 'Carvalho'
@@ -224,9 +268,19 @@ SET nome = (
                WHEN 6 THEN 'Lima'
                WHEN 7 THEN 'Martins'
                WHEN 8 THEN 'Nascimento'
-               ELSE 'Oliveira'
+           WHEN 9 THEN 'Oliveira'
+           WHEN 10 THEN 'Pereira'
+           WHEN 11 THEN 'Ribeiro'
+           WHEN 12 THEN 'Rocha'
+           WHEN 13 THEN 'Santos'
+           WHEN 14 THEN 'Costa'
+           WHEN 15 THEN 'Souza'
+           WHEN 16 THEN 'Araújo'
+           WHEN 17 THEN 'Barbosa'
+           WHEN 18 THEN 'Cardoso'
+           ELSE 'Teixeira'
            END
-    FROM SYSTEM_RANGE(1, 100) amostra
+    FROM SYSTEM_RANGE(1, 400) amostra
     WHERE aluno.email = 'amostra.aluno.' || amostra.x || '@example.com'
 )
 WHERE aluno.email LIKE 'amostra.aluno.%@example.com';
@@ -351,16 +405,23 @@ WHERE NOT EXISTS (
 
 INSERT INTO matriculas (aluno_id, plano_id, data_inicio, data_fim, status, criado_em)
 SELECT aluno.id, plano.id,
-       DATEADD('DAY', -MOD(amostra.x * 7, 180), CURRENT_DATE),
-       DATEADD('DAY', plano.duracao_em_dias - 1,
-               DATEADD('DAY', -MOD(amostra.x * 7, 180), CURRENT_DATE)),
-       CASE MOD(amostra.x, 5)
-           WHEN 0 THEN 'CANCELADA'
-           WHEN 1 THEN 'ENCERRADA'
-           ELSE 'ATIVA'
-       END,
+    CASE WHEN aluno.ativo AND plano.ativo AND MOD(amostra.x, 10) NOT IN (0, 1, 2)
+      THEN DATEADD('DAY', -MOD(amostra.x * 7, plano.duracao_em_dias), CURRENT_DATE)
+      ELSE DATEADD('DAY', -(plano.duracao_em_dias + 30 + MOD(amostra.x * 17, 365)), CURRENT_DATE)
+    END,
+    DATEADD('DAY', plano.duracao_em_dias - 1,
+     CASE WHEN aluno.ativo AND plano.ativo AND MOD(amostra.x, 10) NOT IN (0, 1, 2)
+       THEN DATEADD('DAY', -MOD(amostra.x * 7, plano.duracao_em_dias), CURRENT_DATE)
+       ELSE DATEADD('DAY', -(plano.duracao_em_dias + 30 + MOD(amostra.x * 17, 365)), CURRENT_DATE)
+     END),
+    CASE WHEN NOT aluno.ativo OR NOT plano.ativo THEN 'ENCERRADA'
+      WHEN MOD(amostra.x, 10) = 0 THEN 'CANCELADA'
+      WHEN MOD(amostra.x, 10) = 1 THEN 'ENCERRADA'
+      WHEN MOD(amostra.x, 10) = 2 THEN 'VENCIDA'
+      ELSE 'ATIVA'
+    END,
        CURRENT_TIMESTAMP
-FROM SYSTEM_RANGE(1, 80) amostra
+FROM SYSTEM_RANGE(1, 400) amostra
 JOIN alunos aluno
   ON aluno.email = 'amostra.aluno.' || amostra.x || '@example.com'
 JOIN planos plano
@@ -379,19 +440,14 @@ JOIN planos plano
 WHERE NOT EXISTS (
     SELECT 1 FROM matriculas
     WHERE aluno_id = aluno.id
-      AND plano_id = plano.id
-      AND status = CASE MOD(amostra.x, 5)
-          WHEN 0 THEN 'CANCELADA'
-          WHEN 1 THEN 'ENCERRADA'
-          ELSE 'ATIVA'
-      END
+    AND plano_id = plano.id
 );
 
 INSERT INTO agendamentos
     (aluno_id, instrutor_id, data_hora, duracao_em_minutos, observacoes, status, criado_em, atualizado_em)
 SELECT aluno.id, instrutor.id,
        DATEADD('MINUTE', 480 + MOD(amostra.x * 37, 600),
-               DATEADD('DAY', MOD(amostra.x - 1, 61) - 15, CURRENT_DATE))
+         DATEADD('DAY', MOD(amostra.x - 1, 61) - 15, CURRENT_DATE))
            AT TIME ZONE 'America/Sao_Paulo',
        CASE MOD(amostra.x, 4)
            WHEN 0 THEN 30
@@ -399,19 +455,41 @@ SELECT aluno.id, instrutor.id,
            WHEN 2 THEN 60
            ELSE 90
        END,
-       'Agendamento de amostra ' || amostra.x,
+     CASE MOD(amostra.x, 8)
+       WHEN 0 THEN 'Treino de força - membros superiores'
+       WHEN 1 THEN 'Treino de força - membros inferiores'
+       WHEN 2 THEN 'Avaliação física'
+       WHEN 3 THEN 'Treinamento funcional'
+       WHEN 4 THEN 'Pilates individual'
+       WHEN 5 THEN 'Mobilidade e alongamento'
+       WHEN 6 THEN 'Condicionamento cardiovascular'
+       ELSE 'Reavaliação do treino'
+     END || ' (ref. ' || RIGHT('0000' || CAST(amostra.x AS VARCHAR), 4) || ')',
+     CASE WHEN MOD(amostra.x - 1, 61) - 15 < 0 THEN
        CASE MOD(amostra.x, 10)
-           WHEN 0 THEN 'CANCELADO'
-           WHEN 1 THEN 'CONCLUIDO'
-           ELSE 'AGENDADO'
-       END,
+         WHEN 0 THEN 'CANCELADO'
+         WHEN 1 THEN 'NAO_COMPARECEU'
+         ELSE 'CONCLUIDO'
+       END
+       WHEN MOD(amostra.x, 10) = 0 THEN 'CANCELADO'
+       ELSE 'AGENDADO'
+     END,
        CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
-FROM SYSTEM_RANGE(1, 100) amostra
+FROM SYSTEM_RANGE(1, 1200) amostra
 JOIN alunos aluno
-  ON aluno.email = 'amostra.aluno.' || amostra.x || '@example.com'
+  ON aluno.email = 'amostra.aluno.' || (MOD(amostra.x - 1, 400) + 1) || '@example.com'
 JOIN instrutores instrutor
   ON instrutor.email = 'amostra.instrutor.' || (MOD(amostra.x - 1, 20) + 1) || '@example.com'
 WHERE NOT EXISTS (
     SELECT 1 FROM agendamentos
-    WHERE observacoes = 'Agendamento de amostra ' || amostra.x
+  WHERE observacoes = CASE MOD(amostra.x, 8)
+    WHEN 0 THEN 'Treino de força - membros superiores'
+    WHEN 1 THEN 'Treino de força - membros inferiores'
+    WHEN 2 THEN 'Avaliação física'
+    WHEN 3 THEN 'Treinamento funcional'
+    WHEN 4 THEN 'Pilates individual'
+    WHEN 5 THEN 'Mobilidade e alongamento'
+    WHEN 6 THEN 'Condicionamento cardiovascular'
+    ELSE 'Reavaliação do treino'
+  END || ' (ref. ' || RIGHT('0000' || CAST(amostra.x AS VARCHAR), 4) || ')'
 );

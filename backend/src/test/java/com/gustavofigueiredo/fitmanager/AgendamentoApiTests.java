@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -44,14 +45,28 @@ class AgendamentoApiTests {
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private String token;
+
+    @BeforeEach
+    void autenticar() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl() + "/api/auth/login"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"login\":\"qualquer-login\",\"senha\":\"qualquer-senha\"}"))
+                .build();
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode(), response.body());
+        token = objectMapper.readTree(response.body()).get("token").asText();
+        assertTrue(token.split("\\.").length == 3);
+    }
 
     @Test
     void seedsDevelopmentDataInEveryTable() {
-        assertTrue(alunos.count() >= 105);
+                assertTrue(alunos.count() >= 405);
         assertTrue(planos.count() >= 14);
         assertTrue(instrutores.count() >= 24);
-        assertTrue(matriculas.count() >= 85);
-        assertTrue(agendamentos.count() >= 106);
+                assertTrue(matriculas.count() >= 405);
+                assertTrue(agendamentos.count() >= 1206);
     }
 
     @Test
@@ -70,6 +85,16 @@ class AgendamentoApiTests {
                 .orElseThrow());
         assertTrue(response.headers().firstValue("Access-Control-Allow-Methods").orElseThrow().contains("POST"));
     }
+
+        @Test
+        void rejectsProtectedApiRequestsWithoutBearerToken() throws Exception {
+                HttpResponse<String> response = httpClient.send(
+                                HttpRequest.newBuilder(URI.create(baseUrl() + "/api/agendamentos")).GET().build(),
+                                HttpResponse.BodyHandlers.ofString());
+
+                assertEquals(401, response.statusCode());
+                assertEquals("NAO_AUTORIZADO", objectMapper.readTree(response.body()).get("codigo").asText());
+        }
 
     @Test
     void acceptsLocalSaoPauloTimeAndUpdatesAppointmentWithoutValidationConflict() throws Exception {
@@ -167,6 +192,7 @@ class AgendamentoApiTests {
     private JsonNode request(String method, String path, String body, int expectedStatus) throws Exception {
         HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl() + path))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
                 .method(method, HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8))
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -175,7 +201,8 @@ class AgendamentoApiTests {
     }
 
     private HttpResponse<String> get(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl() + path)).GET().build(),
+        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl() + path))
+                .header("Authorization", "Bearer " + token).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 

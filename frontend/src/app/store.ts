@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
-import redutorAcesso, {
+import accessReducer, {
   chaveAcesso,
   chaveUsuario,
   estadoInicialAcesso,
-} from '../features/acesso/estadoAcesso'
-import type { Usuario } from '../features/acesso/estadoAcesso'
+} from './acesso/estadoAcesso'
+import type { Usuario } from './acesso/estadoAcesso'
 
 const lerUsuario = (): Usuario => {
   try {
@@ -19,23 +19,29 @@ const lerUsuario = (): Usuario => {
   return estadoInicialAcesso.usuario
 }
 
-const lerAcesso = () => {
+const lerToken = () => {
   try {
-    return sessionStorage.getItem(chaveAcesso) === 'liberado'
+    return sessionStorage.getItem(chaveAcesso)
   } catch {
-    return false
+    return null
   }
 }
 
+const tokenSalvo = lerToken()
+
 export const store = configureStore({
-  reducer: { acesso: redutorAcesso },
+  reducer: { acesso: accessReducer },
   preloadedState: {
-    acesso: { usuario: lerUsuario(), acessoLiberado: lerAcesso() },
+    acesso: {
+      usuario: lerUsuario(),
+      acessoLiberado: Boolean(tokenSalvo),
+      token: tokenSalvo,
+    },
   },
 })
 
-export type EstadoAplicacao = ReturnType<typeof store.getState>
-export type DespachoAplicacao = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
 
 const salvarUsuario = (usuario: Usuario) => {
   try {
@@ -45,9 +51,9 @@ const salvarUsuario = (usuario: Usuario) => {
   }
 }
 
-const salvarAcesso = (acessoLiberado: boolean) => {
+const salvarToken = (token: string | null) => {
   try {
-    if (acessoLiberado) sessionStorage.setItem(chaveAcesso, 'liberado')
+    if (token) sessionStorage.setItem(chaveAcesso, token)
     else sessionStorage.removeItem(chaveAcesso)
   } catch {
     return
@@ -61,5 +67,5 @@ store.subscribe(() => {
   if (acessoAtual === acessoAnterior) return
   acessoAnterior = acessoAtual
   salvarUsuario(acessoAtual.usuario)
-  salvarAcesso(acessoAtual.acessoLiberado)
+  salvarToken(acessoAtual.token)
 })
